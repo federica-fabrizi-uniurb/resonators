@@ -1,0 +1,27 @@
+﻿# encoding: utf-8
+# 2020 R2
+SetScriptVersion(Version="20.2.221")
+template1 = GetTemplate(
+    TemplateName="Modal",
+    Solver="ANSYS")
+system1 = template1.CreateSystem()
+
+geometry1 = system1.GetContainer(ComponentName= "Geometry")
+
+geometry1.Edit()
+# can't be Interactive = False or else ag.gui functions are undefined (to create surface from face)
+script = open('insert--here--path--to--geom.js', 'r')
+geometry1.SendCommand(Command=script.read())
+script.close();
+geometry1.Exit()
+
+modelComponent1 = system1.GetComponent(Name="Model")
+modelComponent1.Refresh()
+model1 = system1.GetContainer(ComponentName="Model")
+model1.Edit(Interactive = False)
+# model1.Edit()
+scriptm = open('insert--here--path--to--mech.py', 'r')
+model1.SendCommand(Language='Python',Command=scriptm.read())
+scriptm.close();
+model1.Exit()
+
