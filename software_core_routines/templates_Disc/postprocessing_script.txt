@@ -1,0 +1,197 @@
+! ****** Begin Command Snippet ******
+
+/nolist
+
+/post1
+
+! SELECT MODE
+! make mode 'i' active: set,,,,,,,i
+set,,,,,,,1
+! set,first is equivalent to selecting mode 1
+
+esel,all
+
+*get,e_count,ELEM,,count 
+
+
+! POSITIONS
+! Undeformed X, Y, Z location (based on shape function) of the element centroid in the active coordinate system
+
+*dim,centX,,e_count
+*vget,centX(1),ELEM,1,cent,x
+*cfopen,insert-path-here--data_positionsX,txt
+*vwrite,centX(1)
+(g80.40)
+*cfclose
+
+*dim,centY,,e_count
+*vget,centY(1),ELEM,1,cent,y
+*cfopen,insert-path-here--data_positionsY,txt
+*vwrite,centY(1)
+(g80.40)
+*cfclose
+
+*dim,centZ,,e_count
+*vget,centZ(1),ELEM,1,cent,z
+*cfopen,insert-path-here--data_positionsZ,txt
+*vwrite,centZ(1)
+(g80.40)
+*cfclose
+
+
+! ELASTIC STRAIN (EPSILON)
+
+etable,epelxx,epel,x
+etable,epelyy,epel,y
+etable,epelzz,epel,z
+etable,epelxy,epel,xy
+etable,epelyz,epel,yz
+etable,epelxz,epel,xz
+
+*dim,strainXX,,e_count
+*vget,strainXX(1),ELEM,1,ETAB,epelxx
+*cfopen,insert-path-here--data_strainXX,txt
+*vwrite,strainXX(1)
+(g80.40)
+*cfclose
+
+*dim,strainYY,,e_count
+*vget,strainYY(1),ELEM,1,ETAB,epelyy
+*cfopen,insert-path-here--data_strainYY,txt
+*vwrite,strainYY(1)
+(g80.40)
+*cfclose
+
+*dim,strainZZ,,e_count
+*vget,strainZZ(1),ELEM,1,ETAB,epelzz
+*cfopen,insert-path-here--data_strainZZ,txt
+*vwrite,strainZZ(1)
+(g80.40)
+*cfclose
+
+*dim,strainXY,,e_count
+*vget,strainXY(1),ELEM,1,ETAB,epelxy
+*cfopen,insert-path-here--data_strainXY,txt
+*vwrite,strainXY(1)
+(g80.40)
+*cfclose
+
+*dim,strainYZ,,e_count
+*vget,strainYZ(1),ELEM,1,ETAB,epelyz
+*cfopen,insert-path-here--data_strainYZ,txt
+*vwrite,strainYZ(1)
+(g80.40)
+*cfclose
+
+*dim,strainXZ,,e_count
+*vget,strainXZ(1),ELEM,1,ETAB,epelxz
+*cfopen,insert-path-here--data_strainXZ,txt
+*vwrite,strainXZ(1)
+(g80.40)
+*cfclose
+
+
+! ELEMENT VOLUME (undistorted)
+
+etable,,volu
+
+*dim,volume,,e_count
+*vget,volume(1),ELEM,1,ETAB,volu
+*cfopen,insert-path-here--data_vol,txt
+*vwrite,volume(1)
+(g80.40)
+*cfclose
+
+
+! STRESS
+
+etable,sxx,s,x
+etable,syy,s,y
+etable,szz,s,z
+etable,sxy,s,xy
+etable,syz,s,yz
+etable,sxz,s,xz
+
+*dim,stressXX,,e_count
+*vget,stressXX(1),ELEM,1,ETAB,sxx
+*cfopen,insert-path-here--data_stressXX,txt
+*vwrite,stressXX(1)
+(g80.40)
+*cfclose
+
+*dim,stressYY,,e_count
+*vget,stressYY(1),ELEM,1,ETAB,syy
+*cfopen,insert-path-here--data_stressYY,txt
+*vwrite,stressYY(1)
+(g80.40)
+*cfclose
+
+*dim,stressZZ,,e_count
+*vget,stressZZ(1),ELEM,1,ETAB,szz
+*cfopen,insert-path-here--data_stressZZ,txt
+*vwrite,stressZZ(1)
+(g80.40)
+*cfclose
+
+*dim,stressXY,,e_count
+*vget,stressXY(1),ELEM,1,ETAB,sxy
+*cfopen,insert-path-here--data_stressXY,txt
+*vwrite,stressXY(1)
+(g80.40)
+*cfclose
+
+*dim,stressYZ,,e_count
+*vget,stressYZ(1),ELEM,1,ETAB,syz
+*cfopen,insert-path-here--data_stressYZ,txt
+*vwrite,stressYZ(1)
+(g80.40)
+*cfclose
+
+*dim,stressXZ,,e_count
+*vget,stressXZ(1),ELEM,1,ETAB,sxz
+*cfopen,insert-path-here--data_stressXZ,txt
+*vwrite,stressXZ(1)
+(g80.40)
+*cfclose
+
+
+! ELASTIC STRAIN ENERGY
+! etable,send_ela,send,elastic   !   Elastic strain energy density
+! etable,send_tot,send,ento      !   Total strain energy density (elastic + plastic + creep + damage + viscoelastic dissipation ? + visco-regularization)
+! etable,,sedn                   !   Strain energy density
+! etable,,sene                   !   "Stiffness" energy or thermal heat dissipation (applies to all elements where meaningful). Same as TENE.
+! etable,,tene                   !   Thermal heat dissipation or "stiffness" energy (applies to all elements where meaningful). Same as SENE.
+! etable,,kene                   !   Kinetic energy (applies to all elements where meaningful)
+
+etable,,sene
+
+*dim,senergy,,e_count
+*vget,senergy(1),ELEM,1,ETAB,sene
+*cfopen,insert-path-here--data_energy_sene,txt
+*vwrite,senergy(1)
+(g80.40)
+*cfclose
+
+
+! MODE FREQUENCIES
+
+*cfopen,insert-path-here--data_frequencies,txt
+*get,num_modes,active,0,set,nset,,last ! get count of modes
+*DO,ii_mode,1,num_modes
+/gopr
+set,,,,,,,ii_mode
+*get,cfreq,active,0,set,freq
+*dim,mfreq,,1
+mfreq(1) = cfreq
+*vwrite,mfreq(1)
+(g80.40)
+*ENDDO
+*cfclose
+
+
+fini
+
+! ****** End   Command Snippet ******
+
+
+
