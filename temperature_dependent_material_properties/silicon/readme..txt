@@ -48,6 +48,11 @@ In particular:
 - For Linear Thermal Expansion:
 	element = Si; thermal expansion (1/K); solid; temperature increment = 1 K
 
+
+John J. Hall, Phys. Rev. 161, 756 (1967).
+
+- For Stiffness Matrix.
+
 ===
 
 Additional note(s):
