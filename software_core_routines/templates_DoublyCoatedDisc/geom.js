@@ -82,7 +82,7 @@ return p;
 var Yes = agc.Yes;
 var No = agc.No;
 
- agb.AutoConstraintGlobal(agc.Yes); 
+agb.AutoConstraintGlobal(agc.Yes); 
 
 var plxy = agb.GetXYPlane();
 
